@@ -1,0 +1,37 @@
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Local browser/session cookies
+/cookies.txt
+/admincookies.txt
+
+# Local database backups and exports
+/Database backup/
+*.sql.gz
+*.dump
+*.bak
+*.backup
+
+# Logs and temporary files
+*.log
+/error_log
+*.tmp
+*.temp
+*.swp
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local editor settings
+.idea/
+.vscode/
+
+# Generated dependencies and test artifacts
+/vendor/
+/node_modules/
+/.phpunit.cache/
+/coverage/

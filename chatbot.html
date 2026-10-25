@@ -1,0 +1,67 @@
+<!-- Hungry Man's Chatbot Widget -->
+<div id="chatbot-container" class="chatbot-container">
+    <!-- Chatbot Toggle Button -->
+    <button id="chatbot-toggle" class="chatbot-toggle" title="Open Chat">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <span class="chatbot-badge" id="chatbot-badge">1</span>
+    </button>
+
+    <!-- Chatbot Window -->
+    <div id="chatbot-window" class="chatbot-window hidden">
+        <!-- Header -->
+        <div class="chatbot-header">
+            <div class="chatbot-header-content">
+                <img src="images/Hungry%20Man%E2%80%99s%20Restaurant%20Logo.png" alt="Hungry Man's" class="chatbot-logo">
+                <div class="chatbot-header-text">
+                    <h3>Hungry Man's Assistant</h3>
+                    <p class="chatbot-status" id="chatbot-status">Online</p>
+                </div>
+            </div>
+            <button id="chatbot-close" class="chatbot-close" title="Close Chat">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Messages Container -->
+        <div id="chatbot-messages" class="chatbot-messages">
+            <div class="chatbot-message bot-message" data-aos="fade-up">
+                <div class="message-avatar">
+                    <span>🍽️</span>
+                </div>
+                <div class="message-content">
+                    <p>Hello! 👋 Welcome to Hungry Man's! How can I help you today?</p>
+                    <div class="quick-replies" id="quick-replies">
+                        <button class="quick-reply-btn" onclick="sendQuickReply('Menu')">📋 Menu</button>
+                        <button class="quick-reply-btn" onclick="sendQuickReply('Hours')">⏰ Hours</button>
+                        <button class="quick-reply-btn" onclick="sendQuickReply('Reservation')">📅 Reservation</button>
+                        <button class="quick-reply-btn" onclick="sendQuickReply('Contact')">📞 Contact</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="chatbot-input-area">
+            <form id="chatbot-form" class="chatbot-form">
+                <input 
+                    type="text" 
+                    id="chatbot-input" 
+                    class="chatbot-input" 
+                    placeholder="Type your message..." 
+                    autocomplete="off"
+                    required
+                >
+                <button type="submit" class="chatbot-send-btn" title="Send Message">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M16.6915026,12.4744748 L3.50612381,13.2599618 C3.19218622,13.2599618 3.03521743,13.4170592 3.03521743,13.5741566 L1.15159189,20.0151496 C0.8376543,20.8006365 0.99,21.89 1.77946707,22.52 C2.41,22.99 3.50612381,23.1 4.13399899,22.8429026 L21.714504,14.0454487 C22.6563168,13.5741566 23.1272231,12.6315722 22.9702544,11.6889879 L4.13399899,1.16851155 C3.34915502,0.9114141 2.40734225,1.02349835 1.77946707,1.4948 C0.994623095,2.13399899 0.837654326,3.0765834 1.15159189,3.86208055 L3.03521743,10.3030736 C3.03521743,10.4601709 3.19218622,10.6172683 3.50612381,10.6172683 L16.6915026,11.4027552 C16.6915026,11.4027552 17.1624089,11.4027552 17.1624089,11.8740473 C17.1624089,12.3453395 16.6915026,12.4744748 16.6915026,12.4744748 Z"></path>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

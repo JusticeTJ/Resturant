@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hungry Man's Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+
+        #chatbot {
+            position: fixed !important;
+            right: 22px !important;
+            bottom: 22px !important;
+            z-index: 99999 !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        #chatbot-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: #ff6633;
+            color: white;
+            border: 0;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 28px;
+            box-shadow: 0 4px 12px rgba(255, 102, 51, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        #chatbot-toggle:hover {
+            background: #ff5500;
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(255, 102, 51, 0.6);
+        }
+
+        #chatbot.open #chatbot-toggle {
+            display: none;
+        }
+
+        #chatbot-panel {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            width: 380px;
+            height: 600px;
+            margin-bottom: 10px;
+            flex-direction: column;
+            box-shadow: 0 5px 40px rgba(0, 0, 0, 0.16);
+            overflow: hidden;
+        }
+
+        #chatbot.open #chatbot-panel {
+            display: flex;
+        }
+
+        .chatbot-header {
+            background: white;
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chatbot-header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chatbot-header-title h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #4caf50;
+            border-radius: 50%;
+        }
+
+        .chatbot-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .chatbot-close:hover {
+            color: #333;
+        }
+
+        .quick-options {
+            padding: 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .quick-btn {
+            padding: 12px 10px;
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.3s ease;
+            color: #333;
+        }
+
+        .quick-btn:hover {
+            background: #ff6633;
+            color: white;
+            border-color: #ff6633;
+        }
+
+        #chatbot-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: #fafafa;
+        }
+
+        #chatbot-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #chatbot-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        #chatbot-messages::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 3px;
+        }
+
+        .msg {
+            margin-bottom: 12px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease;
+            white-space: pre-wrap;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .msg.user {
+            background: #ff6633;
+            color: white;
+            margin-left: 40px;
+            margin-right: 0;
+            border-bottom-right-radius: 4px;
+        }
+
+        .msg.bot {
+            background: white;
+            color: #333;
+            margin-right: 40px;
+            margin-left: 0;
+            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 4px;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ccc;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                opacity: 0.5;
+            }
+            30% {
+                opacity: 1;
+            }
+        }
+
+        #chatbot-form {
+            display: flex;
+            gap: 8px;
+            padding: 12px;
+            border-top: 1px solid #f0f0f0;
+            background: white;
+        }
+
+        #chatbot-input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            background: #f5f5f5;
+            color: #333;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        #chatbot-input:focus {
+            outline: none;
+            background: white;
+            border-color: #ff6633;
+        }
+
+        #chatbot-input::placeholder {
+            color: #999;
+        }
+
+        #chatbot-form button {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            background: #ff6633;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: background 0.3s ease;
+        }
+
+        #chatbot-form button:hover {
+            background: #ff5500;
+        }
+
+        #chatbot-form button:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+
+<div id="chatbot">
+    <button id="chatbot-toggle">💬</button>
+    
+    <div id="chatbot-panel">
+        <div class="chatbot-header">
+            <div class="chatbot-header-title">
+                <span style="font-size: 20px;">🍽️</span>
+                <div>
+                    <h3>Hungry Man's Assistant</h3>
+                    <div class="status-badge">
+                        <span class="status-dot"></span>
+                        Online
+                    </div>
+                </div>
+            </div>
+            <button class="chatbot-close" id="chatbot-close">✕</button>
+        </div>
+
+        <div class="quick-options">
+            <button class="quick-btn" data-action="menu">🍽️ Menu</button>
+            <button class="quick-btn" data-action="hours">⏰ Hours</button>
+            <button class="quick-btn" data-action="reservation">📅 Reservation</button>
+            <button class="quick-btn" data-action="contact">📞 Contact</button>
+        </div>
+
+        <div id="chatbot-messages"></div>
+
+        <form id="chatbot-form">
+            <input 
+                type="text" 
+                id="chatbot-input" 
+                placeholder="Type your message..."
+                autocomplete="off"
+            >
+            <button type="submit">➤</button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const chatbot = document.getElementById('chatbot');
+    const chatToggle = document.getElementById('chatbot-toggle');
+    const chatClose = document.getElementById('chatbot-close');
+    const messages = document.getElementById('chatbot-messages');
+    const form = document.getElementById('chatbot-form');
+    const input = document.getElementById('chatbot-input');
+    const quickBtns = document.querySelectorAll('.quick-btn');
+
+    // Configuration: Update this path to match your PHP file location
+    const PHP_ENDPOINT = './chatbot-reply.php';
+    // If your PHP file is in a different folder, use the correct path:
+    // const PHP_ENDPOINT = './api/chatbot-reply.php';
+    // const PHP_ENDPOINT = 'https://yourdomain.com/chatbot-reply.php';
+
+    // Toggle chatbot
+    chatToggle.addEventListener('click', function () {
+        chatbot.classList.toggle('open');
+        if (chatbot.classList.contains('open')) {
+            input.focus();
+            if (messages.children.length === 0) {
+                addMessage("Hi! Welcome to Hungry Man's. How can I help you?", 'bot');
+            }
+        }
+    });
+
+    // Close chatbot
+    chatClose.addEventListener('click', function () {
+        chatbot.classList.remove('open');
+    });
+
+    // Quick action buttons
+    quickBtns.forEach(btn => {
+        btn.addEventListener('click', function () {
+            const action = this.textContent.trim();
+            addMessage(action, 'user');
+            sendMessage(action);
+        });
+    });
+
+    // Form submission
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const message = input.value.trim();
+        if (!message) return;
+
+        addMessage(message, 'user');
+        input.value = '';
+
+        sendMessage(message);
+    });
+
+    function sendMessage(userMessage) {
+        // Show typing indicator
+        showTyping();
+
+        fetch(PHP_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: userMessage })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            removeTyping();
+            if (data.reply) {
+                addMessage(data.reply, 'bot');
+            } else {
+                addMessage("I couldn't process that request. Please try again.", 'bot');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            removeTyping();
+            addMessage(
+                "Sorry, I'm having trouble connecting. Please check:\n\n1. Make sure chatbot-reply.php is in the same folder\n2. Or update the PHP_ENDPOINT path in the code\n3. Try again in a moment",
+                'bot'
+            );
+        });
+    }
+
+    function addMessage(text, sender) {
+        const div = document.createElement('div');
+        div.className = 'msg ' + sender;
+        div.textContent = text;
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    function showTyping() {
+        const typingDiv = document.createElement('div');
+        typingDiv.id = 'typing-indicator';
+        typingDiv.className = 'typing-indicator';
+        typingDiv.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+        messages.appendChild(typingDiv);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    function removeTyping() {
+        const typing = document.getElementById('typing-indicator');
+        if (typing) typing.remove();
+    }
+});
+</script>
+
+</body>
+</html>
